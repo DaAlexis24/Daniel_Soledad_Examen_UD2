@@ -72,6 +72,17 @@ const updateProduct = async (
     return product;
 };
 
+// Método para eliminar un producto
+const deleteProductById = async (id: string): Promise<Product> => {
+    // Buscamos el id mediante el mock
+    const index = mockProducts.findIndex((product) => product.id === id);
+    // Lanzamos el error si no encuentra el ID
+    if (index === -1) throw new Error(`Product with id ${id} not found`);
+    // Con splice eliminamos ese registro
+    const deletedProduct = (await mockProducts.splice(index, 1)[0]) as Product;
+    return deletedProduct;
+};
+
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
@@ -118,6 +129,14 @@ app.patch('/api/products/:id', async (req, res) => {
     log(`Updating product with id ${id}`);
     res.json(result);
     return;
+});
+
+// Ruta para eliminar un producto
+app.delete('api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const result = deleteProductById(id);
+    res.end();
+    return result;
 });
 
 app.listen(port, () => {
