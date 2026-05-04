@@ -41,18 +41,35 @@ const readProductById = (id: string): Product => {
 };
 
 // Creo un tipo para la entrada de los datos que nos da Producto, de esta manera lo controlo mejor
-type CreateProduct = Omit<Product, 'id'>;
+type CreateProduct = Omit<Product, 'id' | 'created_at' | 'updated_at'>;
 
 // Creamos un nuevo producto
-const createProduct = async (productData: CreateProduct): Promise<Product> => {
+const createProduct = async (data: CreateProduct): Promise<Product> => {
     // tipamos la salida como un producto normal, ya que esta va a generar el id de manera aleatoria usando crypto.
     const newProduct: Product = {
-        ...productData,
         id: crypto.randomUUID(),
+        ...data,
+        created_at: new Date(),
+        updated_at: new Date(),
     };
     // Acá usamos el método de los arrays push para lanzar el nuevo Producto dentro de nuestro mock
-    await mockProducts.push(newProduct);
+    mockProducts.push(newProduct);
     return newProduct;
+};
+
+// Creamos un tipo para el update product
+type UpdateProduct = Partial<Product>;
+
+// Método para actualizar el producto
+const updateProduct = async (
+    id: string,
+    data: UpdateProduct,
+): Promise<Product> => {
+    // Acá usamos el método que creamos para buscar mediante el ID, así obtenemos o no el producto
+    const product = await readProductById(id);
+    // Acá asignamos lo ingresado al mock
+    Object.assign(product, data);
+    return product;
 };
 
 const port = process.env.PORT || 3000;
@@ -91,6 +108,18 @@ app.post('/api/products', async (req, res, next) => {
         log('Error while was creating a new product');
         next(error);
     }
+});
+
+// Ruta para actualizar un producto
+app.patch('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const result = {
+        ...req.body,
+        id,
+    };
+    log(`Updating product with id ${id}`);
+    res.json(result);
+    return;
 });
 
 app.listen(port, () => {
