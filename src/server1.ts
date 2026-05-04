@@ -113,10 +113,8 @@ app.post('/api/products', async (req, res, next) => {
 // Ruta para actualizar un producto
 app.patch('/api/products/:id', (req, res) => {
     const { id } = req.params;
-    const result = {
-        ...req.body,
-        id,
-    };
+    const data = req.body;
+    const result = updateProduct(id, data);
     log(`Updating product with id ${id}`);
     res.json(result);
     return;
