@@ -22,7 +22,6 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Creamos las funciones que nos permiten realizar el CRUD de nuestra API
-
 // Leemos todos los productos, usando la interfaz para tipar la respuestas y el mock de los productos enteros
 const readAllProducts = (): Product[] => {
     return mockProducts;
@@ -41,6 +40,21 @@ const readProductById = (id: string): Product => {
     return productIndex;
 };
 
+// Creo un tipo para la entrada de los datos que nos da Producto, de esta manera lo controlo mejor
+type CreateProduct = Omit<Product, 'id'>;
+
+// Creamos un nuevo producto
+const createProduct = async (productData: CreateProduct): Promise<Product> => {
+    // tipamos la salida como un producto normal, ya que esta va a generar el id de manera aleatoria usando crypto.
+    const newProduct: Product = {
+        ...productData,
+        id: crypto.randomUUID(),
+    };
+    // Acá usamos el método de los arrays push para lanzar el nuevo Producto dentro de nuestro mock
+    await mockProducts.push(newProduct);
+    return newProduct;
+};
+
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
@@ -55,11 +69,28 @@ app.get('/api/products', (req, res) => {
     return;
 });
 
+// Ruta para obtener un producto según su ID
 app.get('/api/products/:id', (req, res) => {
     const { id } = req.params;
+    log(`Reading product with id ${id} ...`);
     const product = readProductById(id);
     res.json(product);
     return;
+});
+
+// Ruta para crear un producto
+app.post('/api/products', async (req, res, next) => {
+    try {
+        log('Creating a new product');
+        const data = req.body;
+        const result = await createProduct(data);
+        res.statusCode = 201;
+        res.json(result);
+        return;
+    } catch (error) {
+        log('Error while was creating a new product');
+        next(error);
+    }
 });
 
 app.listen(port, () => {
