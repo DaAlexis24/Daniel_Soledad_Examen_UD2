@@ -1,4 +1,4 @@
-interface Product {
+export interface Product {
     id: string;
     name: string;
     price: number;
@@ -8,7 +8,8 @@ interface Product {
     updated_at: Date;
 }
 
-export const mockProducts: Product[] = [
+// eslint-disable-next-line prefer-const
+export let mockProducts: Product[] = [
     {
         id: 'UD1',
         name: 'Camiseta GitHub Originals',
