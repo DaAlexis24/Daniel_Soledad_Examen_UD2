@@ -28,6 +28,19 @@ const readAllProducts = (): Product[] => {
     return mockProducts;
 };
 
+// Leemos el product según su ID
+const readProductById = (id: string): Product => {
+    // Acá buscamos obtener el id del producto, comparándolo con el que vamos a recibir como parámetro
+    const productIndex = mockProducts.find((product) => product.id === id);
+    if (!productIndex) {
+        // Si no encontramos dicho id, vamos a generar un mensaje de log en nuestra consola y lanzaremos un error
+        log(`Product with id ${id} don't exist into mock`);
+        throw new Error(`Product with id ${id} don't exist into mocK`);
+    }
+    // Devolvemos el index del producto para poder generar una respuesta json
+    return productIndex;
+};
+
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
@@ -39,6 +52,13 @@ app.get('/api/products', (req, res) => {
     log('Reading all products...');
     const products = readAllProducts();
     res.json(products);
+    return;
+});
+
+app.get('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    const product = readProductById(id);
+    res.json(product);
     return;
 });
 
