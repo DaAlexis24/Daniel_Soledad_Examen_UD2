@@ -1,7 +1,8 @@
 import express from 'express';
 import debug from 'debug';
 // Importamos la interfaz y la variable que guarda los mocks para realizar el CRUD
-import { Product, mockProducts } from './data/mock.ts';
+import { mockProducts } from './data/mock.ts';
+import type { Product } from './data/mock.ts';
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -18,12 +19,27 @@ app.use(morgan('dev'));
 // Cors para permitir el ingreso de las peticiones HTTP desde cualquier lugar, en nuestro caso usaremos Postman
 app.use(cors({ origin: '*' }));
 // Express.json nos sirve para parsear las solicitudes entrantes a formato JSON en el body de la petición HTTP, así lo podremos usar en nuestras rutas.
-app.use(express.json())
+app.use(express.json());
+
+// Creamos las funciones que nos permiten realizar el CRUD de nuestra API
+
+// Leemos todos los productos, usando la interfaz para tipar la respuestas y el mock de los productos enteros
+const readAllProducts = (): Product[] => {
+    return mockProducts;
+};
 
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
     res.send('Hola, soy primera versión!');
+});
+
+// Realizamos la ruta de nuestra función readAllProducts
+app.get('/api/products', (req, res) => {
+    log('Reading all products...');
+    const products = readAllProducts();
+    res.json(products);
+    return;
 });
 
 app.listen(port, () => {
