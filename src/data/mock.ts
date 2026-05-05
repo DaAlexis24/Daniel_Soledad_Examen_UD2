@@ -1,15 +1,14 @@
-export interface Product {
-    id: string;
-    name: string;
-    price: number;
-    stock: number;
-    is_active: boolean;
-    created_at: Date;
-    updated_at: Date;
-}
+// export interface Product {
+//     id: string;
+//     name: string;
+//     price: number;
+//     stock: number;
+//     is_active: boolean;
+//     created_at: Date;
+//     updated_at: Date;
+// }
 
-// eslint-disable-next-line prefer-const
-export let mockProducts: Product[] = [
+export const mockProducts = [
     {
         id: 'UD1',
         name: 'Camiseta GitHub Originals',
