@@ -25,3 +25,8 @@ El objetivo de este examen es crear un API REST de productos, utilizando TS + No
    11. Crearemos el editorconfig para el estilo de codificación.
    12. Crearemos la carpeta src para guardar el archivo server1.ts que guardará toda la información de la API
    13. Crearemos nuestro repositorio de Git para subir el primer commit de nuestro proyecto.
+
+### Revisiones del examen
+
+1. Solo usa las dependencias realmente necesarias que necesita tu proyecto, de esta manera cuando te entrevisten para que defiendas tu código evitarás preguntas incómodas. Se limpio y conciso.
+2. Cuando clones otro repositorio, fíjate bien si las versiones de los paquetes tienen una **virgulilla** o un **caret** delante, esto puede causarte problemas a la hora de instalar las dependencias generando que el proyecto no funcione correctamente.

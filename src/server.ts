@@ -1,89 +1,49 @@
 import express from 'express';
+// Importaremos el mock de json
+import PRODUCTS from './data/mock.json' with { type: 'json' };
 import debug from 'debug';
-// Importamos la interfaz y la variable que guarda los mocks para realizar el CRUD
-import { mockProducts } from './data/mock.ts';
-import type { Product } from './data/mock.ts';
+// import { mockProducts } from './data/mock.ts';
+// import type { Product } from './data/mock.ts';
 import morgan from 'morgan';
 import cors from 'cors';
+
+// Declaramos la Interfaz
+interface Product {
+    id: string;
+    name: string;
+    price: number;
+    stock: number;
+    is_active: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
 
 // Definimos el debug para la consola
 const log = debug('API-Products-V1:server');
 
 // Iniciamos una nueva app con Express
 const app = express();
+
 // Usamos este método para ocultar en las cabeceras de las response que nuestro proyecto ha sido creado con Express, maximizando la seguridad
 app.disable('x-powered-by');
 log('Express Products App created');
+
 // Usamos morgan para definir que estamos en modo desarrollo
 app.use(morgan('dev'));
-// Cors para permitir el ingreso de las peticiones HTTP desde cualquier lugar, en nuestro caso usaremos Postman
+
+// Cors para permitir el ingreso de las peticiones HTTP desde los navegadores que estén en un origen distinto. Postman ya usa Cors, así que no es necesario, solo es útil cuando se creará el frontend.
 app.use(cors({ origin: '*' }));
-// Express.json nos sirve para parsear las solicitudes entrantes a formato JSON en el body de la petición HTTP, así lo podremos usar en nuestras rutas.
+
+// Express.json nos sirve para parsear las solicitudes entrantes a formato JSON en el body de la petición HTTP, así lo podremos usar en nuestras rutas. IMPORTANTE
 app.use(express.json());
 
-// Creamos las funciones que nos permiten realizar el CRUD de nuestra API
-// Leemos todos los productos, usando la interfaz para tipar la respuestas y el mock de los productos enteros
-const readAllProducts = (): Product[] => {
-    return mockProducts;
-};
-
-// Leemos el product según su ID
-const readProductById = (id: string): Product => {
-    // Acá buscamos obtener el id del producto, comparándolo con el que vamos a recibir como parámetro
-    const productIndex = mockProducts.find((product) => product.id === id);
-    if (!productIndex) {
-        // Si no encontramos dicho id, vamos a generar un mensaje de log en nuestra consola y lanzaremos un error
-        log(`Product with id ${id} don't exist into mock`);
-        throw new Error(`Product with id ${id} don't exist into mocK`);
-    }
-    // Devolvemos el index del producto para poder generar una respuesta json
-    return productIndex;
-};
-
-// Creo un tipo para la entrada de los datos que nos da Producto, de esta manera lo controlo mejor
-type CreateProduct = Omit<Product, 'id' | 'created_at' | 'updated_at'>;
-
-// Creamos un nuevo producto
-const createProduct = async (data: CreateProduct): Promise<Product> => {
-    // tipamos la salida como un producto normal, ya que esta va a generar el id de manera aleatoria usando crypto.
-    const newProduct: Product = {
-        id: crypto.randomUUID(),
-        ...data,
-        created_at: new Date(),
-        updated_at: new Date(),
-    };
-    // Acá usamos el método de los arrays push para lanzar el nuevo Producto dentro de nuestro mock
-    mockProducts.push(newProduct);
-    return newProduct;
-};
-
-// Creamos un tipo para el update product
-type UpdateProduct = Partial<Product>;
-
-// Método para actualizar el producto
-const updateProduct = async (
-    id: string,
-    data: UpdateProduct,
-): Promise<Product> => {
-    // Acá usamos el método que creamos para buscar mediante el ID, así obtenemos o no el producto
-    const product = await readProductById(id);
-    // Acá asignamos lo ingresado al mock
-    Object.assign(product, data);
-    return product;
-};
-
-// Método para eliminar un producto
-const deleteProductById = async (id: string): Promise<Product> => {
-    // Buscamos el id mediante el mock
-    const index = mockProducts.findIndex((product) => product.id === id);
-    // Lanzamos el error si no encuentra el ID
-    if (index === -1) throw new Error(`Product with id ${id} not found`);
-    // Con splice eliminamos ese registro
-    const deletedProduct = (await mockProducts.splice(index, 1)[0]) as Product;
-    return deletedProduct;
-};
-
 const port = process.env.PORT || 3000;
+
+app.use('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date() });
+});
+
+const products = PRODUCTS as Product[];
 
 app.get('/', (req, res) => {
     res.send('Hola, soy primera versión!');
