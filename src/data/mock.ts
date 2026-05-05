@@ -2,7 +2,7 @@ import type { Product } from '../server.ts';
 
 export const mockProducts: Product[] = [
     {
-        id: 'UD1',
+        id: crypto.randomUUID(),
         name: 'Camiseta GitHub Originals',
         price: 20,
         stock: 10,
@@ -11,7 +11,7 @@ export const mockProducts: Product[] = [
         updated_at: new Date(),
     },
     {
-        id: 'UD2',
+        id: crypto.randomUUID(),
         name: 'Vaquero BluePrint ColdCulture',
         price: 50,
         stock: 8,
@@ -20,7 +20,7 @@ export const mockProducts: Product[] = [
         updated_at: new Date(),
     },
     {
-        id: 'UD3',
+        id: crypto.randomUUID(),
         name: 'Blusa Postman - U GET my URL',
         price: 15,
         stock: 6,

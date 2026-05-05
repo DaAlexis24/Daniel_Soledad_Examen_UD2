@@ -2,10 +2,11 @@ import express from 'express';
 // Importaremos el mock de json
 import PRODUCTS from './data/mock.json' with { type: 'json' };
 import debug from 'debug';
-// import { mockProducts } from './data/mock.ts';
+// import { mockProducts as PRODUCTS } from './data/mock.ts';
 // import type { Product } from './data/mock.ts';
 import morgan from 'morgan';
 import cors from 'cors';
+import type {Request, Response, NextFunction} from 'express'
 
 // Declaramos la Interfaz
 export interface Product {
@@ -14,9 +15,24 @@ export interface Product {
     price: number;
     stock: number;
     is_active: boolean;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: Date;
+    updated_at?: Date;
 }
+
+type ProductCreateDTO = Omit<Product, 'id' | 'created_at' | 'updated_at'>;
+type ProductUpdateDTO = Partial<ProductCreateDTO>;
+
+interface HttpError {
+    status: number
+    statusMessage: string
+    message: string
+}
+
+const products: Product[] = PRODUCTS.map((product) => ({
+    ...product,
+    created_at: new Date(product.created_at),
+    updated_at: new Date(product.updated_at),
+})); // Hacemos cast para que TS reconozca el tipo de datos
 
 // Definimos el debug para la consola
 const log = debug('API-Products-V1:server');
@@ -44,8 +60,6 @@ app.use('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
 });
 
-const products = PRODUCTS as Product[];
-
 app.get('/', (req, res) => {
     res.send('Hola, soy primera versión!');
 });
@@ -61,48 +75,62 @@ app.get('/api/products', (req, res) => {
 app.get('/api/products/:id', (req, res) => {
     const { id } = req.params;
     log(`Reading product with id ${id} ...`);
-    const product = products.find((c) => c.id === id);
+    const product = products.find((i) => i.id === id);
+    if (!product) {
+        res.status(404).json({ message: "Product didn't exist" });
+        return;
+    }
     res.json(product);
     return;
 });
 
 // Ruta para crear un producto
-app.post('/api/products', async (req, res, next) => {
+app.post('/api/products', async (req, res) => {
+    const { body }: { body: ProductCreateDTO } = req;
+
     const newProduct: Product = {
         id: crypto.randomUUID(),
-        name: 
+        name: body.name,
+        price: body.price,
+        stock: body.stock,
+        is_active: body.is_active ?? true,
     };
 
-    try {
-        log('Creating a new product');
-        const data = req.body;
-        const result = await createProduct(data);
-        res.statusCode = 201;
-        res.json(result);
-        return;
-    } catch (error) {
-        log('Error while was creating a new product');
-        next(error);
-    }
+    products.push(newProduct);
+    return res.status(201).json(newProduct);
 });
 
-// Ruta para actualizar un producto
+// // Ruta para actualizar un producto
 app.patch('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    const data = req.body;
-    const result = await updateProduct(id, data);
     log(`Updating product with id ${id}`);
-    res.json(result);
-    return;
+    const product = products.find((i) => i.id === id);
+    const { body }: { body: ProductUpdateDTO } = req;
+
+    if (!product) {
+        res.status(404).json({ message: "Product didn't exist" });
+        return;
+    }
+
+    const updateProduct: Product = {
+        name?: body.name,
+        price?: body.price,
+        stock?: body.stock,
+        is_active?: body.is_active,
+    };
 });
 
-// Ruta para eliminar un producto
-app.delete('api/products/:id', (req, res) => {
-    const { id } = req.params;
-    const result = deleteProductById(id);
-    res.end();
-    return result;
-});
+// // Ruta para eliminar un producto
+// app.delete('api/products/:id', (req, res) => {
+//     const { id } = req.params;
+//     const result = deleteProductById(id);
+//     res.end();
+//     return result;
+// });
+
+app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
+    
+})
 
 app.listen(port, () => {
     log(`Example app listening on port ${port}`);

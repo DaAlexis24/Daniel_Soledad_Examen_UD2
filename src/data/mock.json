@@ -1,23 +1,29 @@
 [
     {
-        "id": "UD1",
+        "id": "e71cc271-dda5-4268-ab39-89384c6a2b79",
         "name": "Camiseta GitHub Originals",
         "price": 20,
         "stock": 10,
-        "is_active": true
+        "is_active": true,
+        "created_at": "2026-05-05T11:25:36.743Z",
+        "updated_at": "2026-05-05T11:25:36.743Z"
     },
     {
-        "id": "UD2",
+        "id": "4ac490b3-72bc-4d02-a5ad-c4892e536426",
         "name": "Vaquero BluePrint ColdCulture",
         "price": 50,
         "stock": 8,
-        "is_active": true
+        "is_active": true,
+        "created_at": "2026-05-05T11:25:36.743Z",
+        "updated_at": "2026-05-05T11:25:36.743Z"
     },
     {
-        "id": "UD3",
+        "id": "0084c3a8-8c77-46da-bcc1-44de607ba712",
         "name": "Blusa Postman - U GET my URL",
         "price": 15,
         "stock": 6,
-        "is_active": false
+        "is_active": false,
+        "created_at": "2026-05-05T11:25:36.743Z",
+        "updated_at": "2026-05-05T11:25:36.743Z"
     }
 ]
