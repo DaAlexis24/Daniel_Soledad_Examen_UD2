@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 
 // Declaramos la Interfaz
-interface Product {
+export interface Product {
     id: string;
     name: string;
     price: number;
@@ -39,6 +39,7 @@ app.use(express.json());
 
 const port = process.env.PORT || 3000;
 
+// Estándar de los APIS
 app.use('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
 });
@@ -49,25 +50,29 @@ app.get('/', (req, res) => {
     res.send('Hola, soy primera versión!');
 });
 
-// Realizamos la ruta de nuestra función readAllProducts
+// GET All Products. Obtenemos toda la información de products y lo devolvemos en formato JSON
 app.get('/api/products', (req, res) => {
     log('Reading all products...');
-    const products = readAllProducts();
     res.json(products);
     return;
 });
 
-// Ruta para obtener un producto según su ID
+// Ruta para obtener un producto según su ID. Accedemos al array products y usamos el método find para hallar el id del producto comparándolo con el id que recibimos como parámetro
 app.get('/api/products/:id', (req, res) => {
     const { id } = req.params;
     log(`Reading product with id ${id} ...`);
-    const product = readProductById(id);
+    const product = products.find((c) => c.id === id);
     res.json(product);
     return;
 });
 
 // Ruta para crear un producto
 app.post('/api/products', async (req, res, next) => {
+    const newProduct: Product = {
+        id: crypto.randomUUID(),
+        name: 
+    };
+
     try {
         log('Creating a new product');
         const data = req.body;

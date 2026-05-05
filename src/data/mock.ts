@@ -1,14 +1,6 @@
-// export interface Product {
-//     id: string;
-//     name: string;
-//     price: number;
-//     stock: number;
-//     is_active: boolean;
-//     created_at: Date;
-//     updated_at: Date;
-// }
+import type { Product } from '../server.ts';
 
-export const mockProducts = [
+export const mockProducts: Product[] = [
     {
         id: 'UD1',
         name: 'Camiseta GitHub Originals',

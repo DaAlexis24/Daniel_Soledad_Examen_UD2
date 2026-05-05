@@ -30,3 +30,5 @@ El objetivo de este examen es crear un API REST de productos, utilizando TS + No
 
 1. Solo usa las dependencias realmente necesarias que necesita tu proyecto, de esta manera cuando te entrevisten para que defiendas tu código evitarás preguntas incómodas. Se limpio y conciso.
 2. Cuando clones otro repositorio, fíjate bien si las versiones de los paquetes tienen una **virgulilla** o un **caret** delante, esto puede causarte problemas a la hora de instalar las dependencias generando que el proyecto no funcione correctamente.
+3. Realiza los commits necesarios, sin olvidarte del Initial Commit. Por ejemplo cada vez que añades un nuevo endpoint.
+4. La capa básica de una API son los endpoints y el manejador de errores
