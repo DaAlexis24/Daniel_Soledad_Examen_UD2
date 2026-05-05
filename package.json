@@ -7,7 +7,7 @@
     "type": "module",
     "main": "index.js",
     "scripts": {
-        "dev": "cross-env NODE_ENV=dev DEBUG=API-Products-V1* node --watch --env-file=.env ./src/server1.ts"
+        "dev": "cross-env NODE_ENV=dev DEBUG=API-Products-V1* node --watch --env-file=.env ./src/server.ts"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
